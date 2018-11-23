@@ -193,8 +193,11 @@ public class Graph {
     PERSPECTIVE, ORTHOGRAPHIC, TWO_D, CUSTOM
   }
 
-  private float _zNearCoefficient;
-  private float _zClippingCoefficient;
+  protected float _zNearCoefficient;
+  protected float _zClippingCoefficient;
+
+  // 6. Main or secondary graph
+  protected Graph _main;
 
   /**
    * Same as {@code this(Type.PERSPECTIVE, w, h)}
@@ -203,6 +206,14 @@ public class Graph {
    */
   public Graph(int width, int height) {
     this(Type.PERSPECTIVE, width, height);
+  }
+
+  public Graph(Type type, int width, int height) {
+    this(null, type, width, height);
+  }
+
+  public Graph(Graph mainGraph, int width, int height) {
+    this(mainGraph, Type.PERSPECTIVE, width, height);
   }
 
   /**
@@ -227,7 +238,8 @@ public class Graph {
    * @see #setRightHanded()
    * @see #setEye(Frame)
    */
-  public Graph(Type type, int width, int height) {
+  public Graph(Graph mainGraph, Type type, int width, int height) {
+    _main = mainGraph == null ? this : mainGraph;
     setWidth(width);
     setHeight(height);
 
@@ -237,7 +249,7 @@ public class Graph {
     setRadius(100);
     setCenter(new Vector());
     _anchor = center().get();
-    setEye(new Frame(this));
+    setEye(isMain() ? new Frame(this) : new Frame());
     setAperture(type);
     fitBall();
 
@@ -250,6 +262,14 @@ public class Graph {
 
     setZNearCoefficient(0.005f);
     setZClippingCoefficient((float) Math.sqrt(3.0f));
+  }
+
+  public boolean isMain() {
+    return _main == this;
+  }
+
+  public Graph main() {
+    return _main;
   }
 
   /**
@@ -651,7 +671,7 @@ public class Graph {
    * @see #pruneBranch(Frame)
    */
   protected List<Frame> _leadingFrames() {
-    return _seeds;
+    return main()._seeds;
   }
 
   /**
@@ -840,7 +860,6 @@ public class Graph {
    * Use {@code TimingHandler.frameCount} to retrieve the number of frames displayed since
    * the first graph was instantiated.
    */
-  //TODO check name
   public long frameCount() {
     return timingHandler().frameCount();
   }

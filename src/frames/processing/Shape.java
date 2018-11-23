@@ -184,7 +184,7 @@ public class Shape extends Frame {
 
   @Override
   public void visit() {
-    draw(graph()._targetPGraphics);
+    draw(Scene._targetPGraphics);
   }
 
   /**

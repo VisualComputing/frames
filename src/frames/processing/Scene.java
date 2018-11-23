@@ -26,10 +26,8 @@ import frames.timing.TimingTask;
 import processing.core.*;
 import processing.data.JSONArray;
 import processing.data.JSONObject;
-import processing.opengl.PGL;
-import processing.opengl.PGraphics3D;
-import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PShader;
+import processing.javafx.PGraphicsFX2D;
+import processing.opengl.*;
 
 import java.nio.FloatBuffer;
 import java.util.Arrays;
@@ -147,7 +145,7 @@ public class Scene extends Graph implements PConstants {
   protected boolean _offscreen;
 
   // _bb : picking buffer
-  protected PGraphics _targetPGraphics;
+  protected static PGraphics _targetPGraphics;
   protected PGraphics _bb;
   protected boolean _bbEnabled;
   protected PShader _triangleShader, _lineShader, _pointShader;
@@ -165,6 +163,28 @@ public class Scene extends Graph implements PConstants {
     this(pApplet, pApplet.g);
   }
 
+  public Scene(Scene mainScene, int width, int height) {
+    this(mainScene, width, height, 0, 0);
+  }
+
+  public Scene(Scene mainScene, int width, int height, int x, int y) {
+    this(mainScene, mainScene.pApplet(), mainScene.pApplet().createGraphics(width, height,
+        mainScene.frontBuffer() instanceof PGraphics3D ? P3D :
+            mainScene.frontBuffer() instanceof PGraphics2D ? P2D :
+                mainScene.frontBuffer() instanceof PGraphicsFX2D ? FX2D : JAVA2D), x, y);
+  }
+
+  public Scene(PApplet pApplet, int width, int height) {
+    this(pApplet, width, height, 0, 0);
+  }
+
+  public Scene(PApplet pApplet, int width, int height, int x, int y) {
+    this(null, pApplet, pApplet.createGraphics(width, height,
+        pApplet.g instanceof PGraphics3D ? P3D :
+            pApplet.g instanceof PGraphics2D ? P2D :
+                pApplet.g instanceof PGraphicsFX2D ? FX2D : JAVA2D), x, y);
+  }
+
   /**
    * Same as {@code this(pApplet, pGraphics, 0, 0)}.
    *
@@ -173,6 +193,10 @@ public class Scene extends Graph implements PConstants {
    */
   public Scene(PApplet pApplet, PGraphics pGraphics) {
     this(pApplet, pGraphics, 0, 0);
+  }
+
+  protected Scene(PApplet pApplet, PGraphics pGraphics, int x, int y) {
+    this(null, pApplet, pGraphics, x, y);
   }
 
   /**
@@ -194,13 +218,13 @@ public class Scene extends Graph implements PConstants {
    * @see #Scene(PApplet)
    * @see #Scene(PApplet, PGraphics)
    */
-  public Scene(PApplet pApplet, PGraphics pGraphics, int x, int y) {
-    super(pGraphics instanceof PGraphics3D ? Type.PERSPECTIVE : Type.TWO_D, pGraphics.width, pGraphics.height);
+  protected Scene(Scene mainScene, PApplet pApplet, PGraphics pGraphics, int x, int y) {
+    super(mainScene, pGraphics instanceof PGraphics3D ? Type.PERSPECTIVE : Type.TWO_D, pGraphics.width, pGraphics.height);
     // 1. P5 objects
     _parent = pApplet;
     _fb = pGraphics;
     _offscreen = pGraphics != pApplet.g;
-    _upperLeftCorner = _offscreen ? new Point(x, y) : new Point(0, 0);
+    setOriginCorner(x, y);
 
     // 2. Matrix helper
     setMatrixHandler(matrixHandler(pGraphics));
@@ -252,6 +276,10 @@ public class Scene extends Graph implements PConstants {
    */
   public Point originCorner() {
     return _upperLeftCorner;
+  }
+
+  public void setOriginCorner(float x, float y) {
+    _upperLeftCorner = _offscreen ? new Point(x, y) : new Point(0, 0);
   }
 
   // P5 STUFF

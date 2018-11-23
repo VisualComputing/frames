@@ -271,7 +271,7 @@ public class Frame {
    * Sets the {@link #precision()} to {@link Precision#FIXED}.
    */
   protected Frame(Graph graph, Frame reference, Vector translation, Quaternion rotation, float scaling) {
-    _graph = graph;
+    _graph = graph == null ? null : graph.main();
     setReference(reference);
     setTranslation(translation);
     setRotation(rotation);
@@ -297,7 +297,7 @@ public class Frame {
    * Copy constructor.
    */
   protected Frame(Graph graph, Frame frame) {
-    this._graph = graph;
+    this._graph = graph == null ? null : graph.main();
     this.setPosition(frame.position());
     this.setOrientation(frame.orientation());
     this.setMagnitude(frame.magnitude());
@@ -367,7 +367,7 @@ public class Frame {
    * @see Graph#traverse()
    */
   public boolean isAttached(Graph graph) {
-    return _graph == graph;
+    return graph == null ? _graph == null : _graph == graph.main();
   }
 
   /**

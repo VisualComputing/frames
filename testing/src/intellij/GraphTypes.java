@@ -13,7 +13,6 @@ public class GraphTypes extends PApplet {
   StdCamera scene;
   Scene auxScene, focus;
   Frame boxFrame;
-  PGraphics canvas, auxCanvas;
   boolean box, sphere;
 
   int w = 1200;
@@ -24,8 +23,7 @@ public class GraphTypes extends PApplet {
   }
 
   public void setup() {
-    canvas = createGraphics(w, h / 2, P3D);
-    scene = new StdCamera(this, canvas);
+    scene = new StdCamera(this, w, h / 2);
     //scene1.setZClippingCoefficient(1);
     scene.setRadius(200);
     scene.setType(Graph.Type.ORTHOGRAPHIC);
@@ -35,10 +33,9 @@ public class GraphTypes extends PApplet {
     // enable computation of the frustum planes equations (disabled by default)
     scene.enableBoundaryEquations();
 
-    auxCanvas = createGraphics(w, h / 2, P3D);
     // Note that we pass the upper left corner coordinates where the scene1
     // is to be drawn (see drawing code below) to its constructor.
-    auxScene = new Scene(this, auxCanvas, 0, h / 2);
+    auxScene = new Scene(this, w, h / 2, 0, h / 2);
     //scene2.setType(Graph.Type.ORTHOGRAPHIC);
     auxScene.setRadius(400);
     //scene2.fitBallInterpolation();
@@ -166,7 +163,7 @@ public class GraphTypes extends PApplet {
   public void draw() {
     handleMouse();
     scene.beginDraw();
-    canvas.background(0);
+    scene.frontBuffer().background(0);
     //draw(canvas1);
     scene.drawAxes();
 
@@ -174,39 +171,39 @@ public class GraphTypes extends PApplet {
     scene.display();
 
     auxScene.beginDraw();
-    auxCanvas.background(0);
+    auxScene.frontBuffer().background(0);
     //draw(canvas2);
     auxScene.drawAxes();
 
     if (sphere) {
-      auxCanvas.pushStyle();
-      auxCanvas.fill(255, 0, 255, 160);
-      auxCanvas.sphere(scene.radius());
-      auxCanvas.popStyle();
+      auxScene.frontBuffer().pushStyle();
+      auxScene.frontBuffer().fill(255, 0, 255, 160);
+      auxScene.frontBuffer().sphere(scene.radius());
+      auxScene.frontBuffer().popStyle();
     }
 
     if (box) {
-      auxCanvas.pushStyle();
-      auxCanvas.pushMatrix();
+      auxScene.frontBuffer().pushStyle();
+      auxScene.frontBuffer().pushMatrix();
       auxScene.applyTransformation(boxFrame);
-      auxCanvas.fill(0, 255, 0, 160);
-      auxCanvas.box(2 * scene.radius());
-      auxCanvas.popMatrix();
-      auxCanvas.popStyle();
+      auxScene.frontBuffer().fill(0, 255, 0, 160);
+      auxScene.frontBuffer().box(2 * scene.radius());
+      auxScene.frontBuffer().popMatrix();
+      auxScene.frontBuffer().popStyle();
     }
 
     // draw with axes
     //eye
-    auxCanvas.pushStyle();
-    auxCanvas.stroke(255, 255, 0);
-    auxCanvas.fill(255, 255, 0, 160);
+    auxScene.frontBuffer().pushStyle();
+    auxScene.frontBuffer().stroke(255, 255, 0);
+    auxScene.frontBuffer().fill(255, 255, 0, 160);
     auxScene.drawEye(scene);
-    auxCanvas.popStyle();
+    auxScene.frontBuffer().popStyle();
     //axes
-    auxCanvas.pushMatrix();
+    auxScene.frontBuffer().pushMatrix();
     auxScene.applyTransformation(scene.eye());
     auxScene.drawAxes(60);
-    auxCanvas.popMatrix();
+    auxScene.frontBuffer().popMatrix();
 
     auxScene.endDraw();
     auxScene.display();
@@ -219,13 +216,8 @@ public class GraphTypes extends PApplet {
   public class StdCamera extends Scene {
     boolean standard;
 
-    public StdCamera(PApplet applet) {
-      super(applet);
-      standard = false;
-    }
-
-    public StdCamera(PApplet applet, PGraphics pg) {
-      super(applet, pg);
+    public StdCamera(PApplet applet, int w, int h) {
+      super(applet, w, h);
       standard = false;
     }
 

@@ -11,7 +11,7 @@ import processing.opengl.PShader;
 
 public class DOF extends PApplet {
   PShader depthShader, dofShader;
-  PGraphics srcPGraphics, depthPGraphics, dofPGraphics;
+  PGraphics depthPGraphics, dofPGraphics;
   Scene scene;
   Shape[] models;
   int mode = 2;
@@ -24,8 +24,7 @@ public class DOF extends PApplet {
   @Override
   public void setup() {
     colorMode(HSB, 255);
-    srcPGraphics = createGraphics(width, height, P3D);
-    scene = new Scene(this, srcPGraphics);
+    scene = new Scene(this, width, height);
     //scene.setAperture(Graph.Type.PERSPECTIVE);
     //scene.setAperture(Graph.Type.ORTHOGRAPHIC);
     scene.setRadius(1000);
