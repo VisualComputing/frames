@@ -21,8 +21,8 @@ public class AuxiliaryViewer extends PApplet {
   }
 
   public void setup() {
-    scene1 = new Scene(this, w, h);
-    //scene1 = new Scene(this);
+    //scene1 = new Scene(this, w, h);
+    scene1 = new Scene(this);
     scene1.setRadius(1000);
     //scene1.setAperture(Graph.Type.ORTHOGRAPHIC);
     scene1.fitBallInterpolation();
