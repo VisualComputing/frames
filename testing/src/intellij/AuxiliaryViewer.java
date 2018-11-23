@@ -1,5 +1,6 @@
 package intellij;
 
+import frames.core.Frame;
 import frames.core.Graph;
 import frames.processing.Scene;
 import frames.processing.Shape;
@@ -7,7 +8,7 @@ import processing.core.PApplet;
 import processing.core.PShape;
 import processing.event.MouseEvent;
 
-public class AuxiliarViewer1 extends PApplet {
+public class AuxiliaryViewer extends PApplet {
   Scene scene1, scene2, focus;
   Shape[] models;
   boolean displayAuxiliarViewer = true;
@@ -47,6 +48,13 @@ public class AuxiliarViewer1 extends PApplet {
   public void keyPressed() {
     if (key == ' ')
       displayAuxiliarViewer = !displayAuxiliarViewer;
+    if (key == 'p') {
+      Frame trackedFrame = scene1.track();
+      if (trackedFrame != null)
+        scene2.setTrackedFrame(trackedFrame);
+      else
+        scene2.resetTrackedFrame();
+    }
     if (key == 'f')
       focus.fitBallInterpolation();
     if (key == 't') {
@@ -60,7 +68,7 @@ public class AuxiliarViewer1 extends PApplet {
 
   @Override
   public void mouseMoved() {
-    focus.cast();
+    scene1.cast();
   }
 
   @Override
@@ -89,24 +97,31 @@ public class AuxiliarViewer1 extends PApplet {
 
   public void draw() {
     focus = displayAuxiliarViewer ? (mouseX > w / 2 && mouseY > h / 2) ? scene2 : scene1 : scene1;
-    //background(0);
-    scene1.beginDraw();
-    scene1.frontBuffer().background(0);
-    scene1.traverse();
-    scene1.endDraw();
-    scene1.display();
+    background(0);
+    if (scene1.isOffscreen()) {
+      scene1.beginDraw();
+      scene1.frontBuffer().background(0);
+      scene1.traverse();
+      scene1.endDraw();
+      scene1.display();
+    } else
+      scene1.traverse();
 
     if (displayAuxiliarViewer) {
+      if (!scene1.isOffscreen())
+        scene1.beginHUD();
       scene2.beginDraw();
       scene2.frontBuffer().background(125);
       scene2.drawAxes();
       scene2.traverse();
       scene2.endDraw();
       scene2.display();
+      if (!scene1.isOffscreen())
+        scene1.endHUD();
     }
   }
 
   public static void main(String args[]) {
-    PApplet.main(new String[]{"intellij.AuxiliarViewer1"});
+    PApplet.main(new String[]{"intellij.AuxiliaryViewer"});
   }
 }
