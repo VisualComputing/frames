@@ -378,12 +378,13 @@ public class Graph {
     }
   }
 
+  // TODO api docs
   /**
    * Sets the {@link #eye()} {@link Frame#magnitude()} (which is used to compute the
    * {@link Frame#projection(Type, float, float, float, float, boolean)} matrix),
    * according to {@code fov} (field-of-view) which is expressed in radians.
    * <p>
-   * Computed as {@code 2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis())) * (float) Math.tan(fov / 2) / width())}
+   * Computed as {@code tan(fov / 2) * 2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis())) / width()}
    * if the graph {@link #type()} is {@link Type#ORTHOGRAPHIC}, and as {@code tan(fov/2)} ,
    * otherwise (i.e., {@link Type#ORTHOGRAPHIC} and {@link Type#TWO_D} graph types).
    *
@@ -394,7 +395,7 @@ public class Graph {
    */
   public void setFOV(float fov) {
     eye().setMagnitude(type() == Type.ORTHOGRAPHIC ?
-        2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis())) * (float) Math.tan(fov / 2) / width() :
+        (float) Math.tan(fov / 2) * 2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis())) / width() :
         (float) Math.tan(fov / 2));
   }
 
@@ -420,9 +421,9 @@ public class Graph {
    * @see #setFOV(float)
    */
   public float fov() {
-    return type() == Type.PERSPECTIVE ?
-        2 * (float) Math.atan(eye().magnitude()) :
-        2 * (float) Math.atan(eye().magnitude() * width() / (2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis()))));
+    return type() == Type.ORTHOGRAPHIC ?
+        2 * (float) Math.atan(eye().magnitude() * width() / (2 * Math.abs(Vector.scalarProjection(Vector.subtract(eye().position(), center()), eye().zAxis())))) :
+        2 * (float) Math.atan(eye().magnitude());
   }
 
   /**

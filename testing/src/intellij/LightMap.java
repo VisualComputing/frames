@@ -23,7 +23,6 @@ public class LightMap extends PApplet {
   }
 
   public void setup() {
-    rectMode(CENTER);
     scene = new Scene(this);
     scene.setRadius(max(w, h));
     shapes = new Shape[20];
@@ -41,17 +40,13 @@ public class LightMap extends PApplet {
             pg.strokeWeight(3);
             pg.stroke(0, 255, 255);
             pg.fill(255, 0, 0);
-            if (scene.is3D())
-              pg.box(80);
-            else
-              pg.rect(0, 0, 80, 60);
+            pg.box(80);
           }
           pg.popStyle();
         }
       };
       shapes[i].randomize();
     }
-    //scene.setType(Graph.Type.ORTHOGRAPHIC);
     scene.setRadius(scene.radius() * 1.2f);
     scene.fit(1);
     shadowMap = createGraphics(w / 2, h / 2, P3D);
