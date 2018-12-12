@@ -6,15 +6,16 @@ import frames.processing.Shape;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.event.MouseEvent;
+import processing.opengl.PShader;
 
-public class LightMap extends PApplet {
+public class ShadowMap extends PApplet {
   Graph.Type shadowMapType = Graph.Type.ORTHOGRAPHIC;
   Scene scene;
   Shape[] shapes;
-  //Frame light;
   PGraphics shadowMap;
+  PShader depthShader;
   float zNear = 50;
-  float zFar = 500;
+  float zFar = 1000;
   int w = 1000;
   int h = 1000;
 
@@ -33,12 +34,15 @@ public class LightMap extends PApplet {
           pg.pushStyle();
           if (scene.trackedFrame("light") == this) {
             Scene.drawAxes(pg, 150);
-            pg.fill(isTracked() ? 255 : 25, isTracked() ? 0 : 255, 255);
+            pg.fill(scene.isTrackedFrame(this) ? 255 : 25, 100, 255);
             Scene.drawEye(pg, shadowMap, shadowMapType, this, zNear, zFar);
 
           } else {
             pg.strokeWeight(3);
-            pg.stroke(0, 255, 255);
+            if (scene.trackedFrame("light") != null)
+              pg.noStroke();
+            else
+              pg.stroke(0, 255, 255);
             pg.fill(255, 0, 0);
             pg.box(80);
           }
@@ -46,10 +50,18 @@ public class LightMap extends PApplet {
         }
       };
       shapes[i].randomize();
+      shapes[i].setHighlighting(Shape.Highlighting.NONE);
     }
     scene.setRadius(scene.radius() * 1.2f);
     scene.fit(1);
+
+    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth.glsl");
+    depthShader.set("near", zNear);
+    depthShader.set("far", zFar);
     shadowMap = createGraphics(w / 2, h / 2, P3D);
+    shadowMap.shader(depthShader);
+
+    scene.setTrackedFrame("light", shapes[(int) random(0, shapes.length - 1)]);
   }
 
   public void draw() {
@@ -112,6 +124,6 @@ public class LightMap extends PApplet {
   }
 
   public static void main(String args[]) {
-    PApplet.main(new String[]{"intellij.LightMap"});
+    PApplet.main(new String[]{"intellij.ShadowMap"});
   }
 }
