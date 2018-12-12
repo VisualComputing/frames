@@ -34,7 +34,7 @@ public class ShadowMap extends PApplet {
           pg.pushStyle();
           if (scene.trackedFrame("light") == this) {
             Scene.drawAxes(pg, 150);
-            pg.fill(scene.isTrackedFrame(this) ? 255 : 25, 100, 255);
+            pg.fill(0, scene.isTrackedFrame(this) ? 255 : 0, 255, 120);
             Scene.drawEye(pg, shadowMap, shadowMapType, this, zNear, zFar);
 
           } else {
@@ -48,6 +48,16 @@ public class ShadowMap extends PApplet {
             pg.box(80);
           }
           pg.popStyle();
+        }
+
+        @Override
+        public void interact(Object... gesture) {
+          if (scene.trackedFrame("light") == this && gesture.length == 1)
+            if (gesture[0] instanceof Integer)
+              if (zFar + (Integer) gesture[0] > zNear) {
+                zFar += (Integer) gesture[0];
+                depthShader.set("far", zFar);
+              }
         }
       };
       shapes[i].randomize();
@@ -66,13 +76,13 @@ public class ShadowMap extends PApplet {
   }
 
   public void draw() {
-    background(90, 80, 125);
+    background(75, 25, 15);
     // 1. Fill in and display front-buffer
     scene.traverse();
     // 2. Fill in shadow map using the light point of view
     if (scene.trackedFrame("light") != null) {
       shadowMap.beginDraw();
-      shadowMap.background(120);
+      shadowMap.background(140, 160, 125);
       scene.traverse(shadowMap, shadowMapType, scene.trackedFrame("light"), zNear, zFar);
       shadowMap.endDraw();
       // 3. Display shadow map
@@ -83,7 +93,7 @@ public class ShadowMap extends PApplet {
   }
 
   public void mouseMoved(MouseEvent event) {
-    if (event.isControlDown())
+    if (event.isShiftDown())
       scene.cast("light");
     else
       scene.cast();
@@ -99,29 +109,19 @@ public class ShadowMap extends PApplet {
   }
 
   public void mouseWheel(MouseEvent event) {
-    scene.scale(event.getCount() * 20);
+    if (event.isShiftDown())
+      scene.defaultHIDControl(event.getCount() * 20);
+    else
+      scene.scale(event.getCount() * 20);
   }
 
   public void keyPressed() {
     if (key == 'f')
       scene.fitFOV(1);
-    if (key == 'a')
-      scene.fitFOV();
-    if (key == '1')
-      scene.setFOV(1);
-    if (key == '3')
-      scene.setFOV(PI / 3);
-    if (key == '4')
-      scene.setFOV(PI / 4);
     if (key == 'o')
-      if (shadowMapType == Graph.Type.ORTHOGRAPHIC)
-        shadowMapType = Graph.Type.PERSPECTIVE;
-      else
-        shadowMapType = Graph.Type.ORTHOGRAPHIC;
+      shadowMapType = shadowMapType == Graph.Type.ORTHOGRAPHIC ? Graph.Type.PERSPECTIVE : Graph.Type.ORTHOGRAPHIC;
     if (key == 't')
       scene.togglePerspective();
-    if (key == 'p')
-      scene.eye().position().print();
   }
 
   public static void main(String args[]) {
