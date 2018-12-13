@@ -52,7 +52,7 @@ public class ShadowMap extends PApplet {
 
         @Override
         public void interact(Object... gesture) {
-          if (scene.trackedFrame("light") == this && gesture.length == 1)
+          if (gesture.length == 1)
             if (gesture[0] instanceof Integer)
               if (zFar + (Integer) gesture[0] > zNear) {
                 zFar += (Integer) gesture[0];
@@ -110,7 +110,9 @@ public class ShadowMap extends PApplet {
 
   public void mouseWheel(MouseEvent event) {
     if (event.isShiftDown())
-      scene.defaultHIDControl(event.getCount() * 20);
+      // application control of the light: set the zfar plan of the light
+      // it is implemented as a custom behavior by frame.interact()
+      scene.control("light", event.getCount() * 20);
     else
       scene.scale(event.getCount() * 20);
   }
