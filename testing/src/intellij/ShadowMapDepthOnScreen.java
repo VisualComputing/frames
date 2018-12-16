@@ -1,6 +1,8 @@
 package intellij;
 
 import frames.core.Graph;
+import frames.primitives.Quaternion;
+import frames.primitives.Vector;
 import frames.processing.Scene;
 import frames.processing.Shape;
 import processing.core.PApplet;
@@ -8,7 +10,7 @@ import processing.core.PGraphics;
 import processing.event.MouseEvent;
 import processing.opengl.PShader;
 
-public class ShadowMap extends PApplet {
+public class ShadowMapDepthOnScreen extends PApplet {
   Graph.Type shadowMapType = Graph.Type.ORTHOGRAPHIC;
   Scene scene;
   Shape[] shapes;
@@ -69,15 +71,19 @@ public class ShadowMap extends PApplet {
     depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth.glsl");
     depthShader.set("near", zNear);
     depthShader.set("far", zFar);
+    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth.glsl");
+    //depthShader.set("maxDepth", 10);
     shadowMap = createGraphics(w / 2, h / 2, P3D);
     shadowMap.shader(depthShader);
 
     scene.setTrackedFrame("light", shapes[(int) random(0, shapes.length - 1)]);
+    scene.trackedFrame("light").setOrientation(new Quaternion(new Vector(0, 0, 1), scene.trackedFrame("light").position()));
   }
 
   public void draw() {
     background(75, 25, 15);
     // 1. Fill in and display front-buffer
+    scene.drawAxes();
     scene.traverse();
     // 2. Fill in shadow map using the light point of view
     if (scene.trackedFrame("light") != null) {
@@ -127,6 +133,6 @@ public class ShadowMap extends PApplet {
   }
 
   public static void main(String args[]) {
-    PApplet.main(new String[]{"intellij.ShadowMap"});
+    PApplet.main(new String[]{"intellij.ShadowMapDepthOnScreen"});
   }
 }
