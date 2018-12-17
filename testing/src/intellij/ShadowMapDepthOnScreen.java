@@ -16,6 +16,7 @@ public class ShadowMapDepthOnScreen extends PApplet {
   Shape[] shapes;
   PGraphics shadowMap;
   PShader depthShader;
+  boolean one;
   float zNear = 50;
   float zFar = 1000;
   int w = 1000;
@@ -58,7 +59,10 @@ public class ShadowMapDepthOnScreen extends PApplet {
             if (gesture[0] instanceof Integer)
               if (zFar + (Integer) gesture[0] > zNear) {
                 zFar += (Integer) gesture[0];
-                depthShader.set("far", zFar);
+                if (one)
+                  depthShader.set("maxDepth", zFar - zNear);
+                else
+                  depthShader.set("far", zFar);
               }
         }
       };
@@ -68,16 +72,30 @@ public class ShadowMapDepthOnScreen extends PApplet {
     scene.setRadius(scene.radius() * 1.2f);
     scene.fit(1);
 
-    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth.glsl");
-    depthShader.set("near", zNear);
-    depthShader.set("far", zFar);
-    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth.glsl");
-    //depthShader.set("maxDepth", 10);
     shadowMap = createGraphics(w / 2, h / 2, P3D);
-    shadowMap.shader(depthShader);
+    setShader();
 
     scene.setTrackedFrame("light", shapes[(int) random(0, shapes.length - 1)]);
     scene.trackedFrame("light").setOrientation(new Quaternion(new Vector(0, 0, 1), scene.trackedFrame("light").position()));
+  }
+
+  public void setShader() {
+    setShader(true);
+  }
+
+  public void setShader(boolean one_) {
+    one = one_;
+    if (one) {
+      depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth.glsl");
+      depthShader.set("maxDepth", 10);
+      println("version 1 of the shader");
+    } else {
+      depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth_linear.glsl");
+      depthShader.set("near", zNear);
+      depthShader.set("far", zFar);
+      println("version 2 of the shader");
+    }
+    shadowMap.shader(depthShader);
   }
 
   public void draw() {
@@ -126,10 +144,14 @@ public class ShadowMapDepthOnScreen extends PApplet {
   public void keyPressed() {
     if (key == 'f')
       scene.fitFOV(1);
-    if (key == 'o')
-      shadowMapType = shadowMapType == Graph.Type.ORTHOGRAPHIC ? Graph.Type.PERSPECTIVE : Graph.Type.ORTHOGRAPHIC;
-    if (key == 't')
+    if (key == 'o') {
+      one = !one;
+      setShader(one);
+    }
+    if (key == 'p')
       scene.togglePerspective();
+    if (key == 't')
+      shadowMapType = shadowMapType == Graph.Type.ORTHOGRAPHIC ? Graph.Type.PERSPECTIVE : Graph.Type.ORTHOGRAPHIC;
   }
 
   public static void main(String args[]) {

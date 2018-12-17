@@ -74,10 +74,10 @@ public class ShadowMapDOFOffScreen extends PApplet {
 
     lightPGraphics = createGraphics(width / 2, height / 2, P3D);
 
-    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth.glsl");
+    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth_linear.glsl");
     depthShader.set("near", zNear);
     depthShader.set("far", zFar);
-    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth.glsl");
+    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth_linear.glsl");
     //depthShader.set("maxDepth", zFar - zNear);
     depthPGraphics = createGraphics(width / 2, height / 2, P3D);
     depthPGraphics.shader(depthShader);

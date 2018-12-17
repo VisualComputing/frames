@@ -35,8 +35,10 @@ public class DOF extends PApplet {
       scene.randomize(models[i]);
     }
 
-    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth.glsl");
-    depthShader.set("maxDepth", scene.radius() * 2);
+    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/dof/depth_linear.glsl");
+    //depthShader.set("maxDepth", scene.radius() * 2);
+    //depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth_nonlinear.glsl");
+    depthShader = loadShader("/home/pierre/IdeaProjects/frames/testing/data/depth/depth_linear.glsl");
     depthPGraphics = createGraphics(width, height, P3D);
     depthPGraphics.shader(depthShader);
 
@@ -61,6 +63,8 @@ public class DOF extends PApplet {
     // 2. Draw into depth buffer
     depthPGraphics.beginDraw();
     depthPGraphics.background(0);
+    depthShader.set("near", scene.zNear());
+    depthShader.set("far", scene.zFar());
     scene.traverse(depthPGraphics);
     depthPGraphics.endDraw();
 
