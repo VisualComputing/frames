@@ -73,7 +73,7 @@ public class ShadowMapDepthOnScreen extends PApplet {
     scene.fit(1);
 
     shadowMap = createGraphics(w / 2, h / 2, P3D);
-    setShader();
+    setShader(false);
 
     scene.setTrackedFrame("light", shapes[(int) random(0, shapes.length - 1)]);
     scene.trackedFrame("light").setOrientation(new Quaternion(new Vector(0, 0, 1), scene.trackedFrame("light").position()));
