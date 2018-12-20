@@ -2296,10 +2296,9 @@ public class Scene extends Graph implements PConstants {
    * {@code type}, eye {@link Frame#magnitude()}, {@code zNear} and {@code zFar}, while taking into account
    * whether or not the scene is {@code leftHanded}.
    * <p>
-   * Use it in conjunction with {@link #traverse(PGraphics, Type, Frame, float, float, boolean)} as when
-   * defining a shadow map.
+   * Use it in conjunction with {@link #traverse(PGraphics, Type, Frame, float, float, boolean)} as when rendering
+   * a shadow map.
    *
-   * @see #traverse(PGraphics, Type, Frame, float, float, boolean)
    * @see #drawFrustum(Graph)
    * @see #drawFrustum(PGraphics, Graph)
    * @see #drawFrustum(PGraphics, PGraphics, Type, Frame, float, float)
