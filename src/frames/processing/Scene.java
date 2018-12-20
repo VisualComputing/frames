@@ -2258,7 +2258,8 @@ public class Scene extends Graph implements PConstants {
   }
 
   /**
-   * Draws a representations of the {@code graph.eye()} onto {@code pGraphics}.
+   * Draws a representation of the viewing frustum onto {@code pGraphics} according to
+   * {@code graph.eye()} and {@code graph.type()}.
    * <p>
    * Note that if {@code graph == this} this method has not effect at all.
    *
@@ -2291,7 +2292,10 @@ public class Scene extends Graph implements PConstants {
   }
 
   /**
-   * Draws a representation of the eye according to the frustum parameters and the frame {@link Frame#magnitude()}.
+   * Draws a representation of the {@code eyeBuffer} frustum onto {@code pGraphics} according to frustum parameters:
+   * {@code type}, eye {@link Frame#magnitude()}, {@code zNear} and {@code zFar}, while taking into account
+   * whether or not the scene is {@code leftHanded}.
+   * <p>
    * Use it in conjunction with {@link #traverse(PGraphics, Type, Frame, float, float, boolean)} as when
    * defining a shadow map.
    *
