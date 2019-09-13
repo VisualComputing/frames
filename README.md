@@ -1,3 +1,7 @@
+# Note: this project is deprecated!
+
+Please visit [nub](https://github.com/VisualComputing/nub) to find the latest code. My latest code has been merged with that project and I am committing all my new updates to it.
+
 Frames
 [![All Contributors](https://img.shields.io/badge/all_contributors-0-orange.svg?style=flat-square)](#contributors)
 ===========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================
